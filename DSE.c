@@ -1,17 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//2018112071 Àü¹®¼ö
 
-//»ó¼ö Á¤ÀÇ
+//ìƒìˆ˜ ì •ì˜
 #define BLOCK_SIZE 8
 #define DES_ROUND 16
 
-//Å¸ÀÔ Á¤ÀÇ
+//íƒ€ì… ì •ì˜
 typedef unsigned char BYTE;
 typedef unsigned int UINT;
 
-//ÇÔ¼ö ¼±¾ğ
+//í•¨ìˆ˜ ì„ ì–¸
 void DES_Encryption(BYTE *p_text, BYTE *result, BYTE *key);
 void DES_Decryption(BYTE *c_text, BYTE *result, BYTE *key);
 void IP(BYTE *in, BYTE *out);
@@ -28,10 +27,10 @@ void makeBit28(UINT *c, UINT *d, BYTE *data);
 UINT cir_shift(UINT n, int r);
 void BtoW(BYTE *in, UINT *x, UINT *y);
 void WtoB(UINT l, UINT r, BYTE *out);
-int HtoI(BYTE *hex); //16Áø¼ö¸¦ 10Áø¼ö·Î º¯È¯ÇÏ´Â ÇÔ¼ö
+int HtoI(BYTE *hex); //16ì§„ìˆ˜ë¥¼ 10ì§„ìˆ˜ë¡œ ë³€í™˜í•˜ëŠ” í•¨ìˆ˜
 
-//Àü¿ª º¯¼ö
-//ÃÊ±â ¼ø¿­ Å×ÀÌºí
+//ì „ì—­ ë³€ìˆ˜
+//ì´ˆê¸° ìˆœì—´ í…Œì´ë¸”
 BYTE ip[64] = { 58,50,42,34,26,18,10,2,
 				60,52,44,36,28,20,12,4,
 				62,54,46,38,30,22,14,6,
@@ -40,7 +39,7 @@ BYTE ip[64] = { 58,50,42,34,26,18,10,2,
 				59,51,43,35,27,19,11,3,
 				61,53,45,37,29,21,13,5,
 				63,55,47,39,31,23,15,7 };
-//¿ªÃÊ±â ¼ø¿­ Å×ÀÌºí
+//ì—­ì´ˆê¸° ìˆœì—´ í…Œì´ë¸”
 BYTE ip_1[64] = { 40,8,48,16,56,24,64,32,
 				39,7,47,15,55,23,63,31,
 				38,6,46,14,54,22,62,30,
@@ -49,19 +48,19 @@ BYTE ip_1[64] = { 40,8,48,16,56,24,64,32,
 				35,3,43,11,51,19,59,27,
 				34,2,42,10,50,18,58,26,
 				33,1,41,9,49,17,57,25 };
-//È®Àå ¼ø¿­ Å×ÀÌºí
+//í™•ì¥ ìˆœì—´ í…Œì´ë¸”
 BYTE E[48] = { 32,1,2,3,4,5,4,5,
 				6,7,8,9,8,9,10,11,
 				12,13,12,13,14,15,16,17,
 				16,17,18,19,20,21,20,21,
 				22,23,24,25,24,25,26,27,
 				28,29,28,29,30,31,32,1 };
-//¼ø¿­ Å×ÀÌºí
+//ìˆœì—´ í…Œì´ë¸”
 BYTE P[32] = { 16,7,20,21,29,12,28,17,
 				1,15,23,26,5,18,31,10,
 				2,8,24,14,32,27,3,9,
 				19,13,30,6,22,11,4,25 };
-//¼ø¿­¼±ÅÃ-1 Å×ÀÌºí
+//ìˆœì—´ì„ íƒ-1 í…Œì´ë¸”
 BYTE PC_1[56] = { 57,49,41,33,25,17,9,1,
 				58,50,42,34,26,18,10,2,
 				59,51,43,35,27,19,11,3,
@@ -69,14 +68,14 @@ BYTE PC_1[56] = { 57,49,41,33,25,17,9,1,
 				31,23,15,7,62,54,46,38,
 				30,22,14,6,61,53,45,37,
 				29,21,13,5,28,20,12,4 };
-//¼ø¿­¼±ÅÃ-2 Å×ÀÌºí
+//ìˆœì—´ì„ íƒ-2 í…Œì´ë¸”
 BYTE PC_2[48] = { 14,17,11,24,1,5,3,28,
 				15,6,21,10,23,19,12,4,
 				26,8,16,7,27,20,13,2,
 				41,52,31,37,47,55,30,40,
 				51,45,33,48,44,49,39,56,
 				34,53,46,42,50,36,29,32 };
-//s-boxÅ×ÀÌºí
+//s-boxí…Œì´ë¸”
 BYTE s_box[8][4][16]=
 {
 	{14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7,
@@ -125,30 +124,28 @@ int msg_len2 = 0;
 void main() {
 	int i;
 	int msg_len = 0, block_count = 0;
-	BYTE p_text[128] = { 0, }; //Æò¹®
-	BYTE c_text[128] = { 0, }; //¾ÏÈ£¹®
-	BYTE d_text[128] = { 0, }; //º¹È£¹®
-	BYTE key[9] = { 0, }; //Å°
+	BYTE p_text[128] = { 0, }; //í‰ë¬¸
+	BYTE c_text[128] = { 0, }; //ì•”í˜¸ë¬¸
+	BYTE d_text[128] = { 0, }; //ë³µí˜¸ë¬¸
+	BYTE key[9] = { 0, }; //í‚¤
 
 	BYTE p_temp[128] = { 0, };
 	BYTE key_temp[128] = { 0, };
 	BYTE temp[2] = { 0,0 };
 
-	printf("2018112071 Àü¹®¼ö\n\n");
-
-	//Æò¹®°ú Å° ¸ğµÎ 10Áø¼ö·Î ¹Ù²Ù±â À§ÇØ 2ÀÚ¸®¾¿ ²÷¾î¼­ HtoI¿¡ ´ëÀÔ
-	printf("Æò¹® ÀÔ·Â : ");
+	//í‰ë¬¸ê³¼ í‚¤ ëª¨ë‘ 10ì§„ìˆ˜ë¡œ ë°”ê¾¸ê¸° ìœ„í•´ 2ìë¦¬ì”© ëŠì–´ì„œ HtoIì— ëŒ€ì…
+	printf("í‰ë¬¸ ì…ë ¥ : ");
 	gets(p_temp);
 	int num = 0;
 	for (i = 0; i < (int)strlen((char*)p_temp); i++) {
 		int k = i % 2;
 		temp[k] = p_temp[i];
-		if ((i + 1) % 2 == 0) { //i°¡ È¦¼öÀÌ¸é 10Áø¼ö·Î º¯°æ
+		if ((i + 1) % 2 == 0) { //iê°€ í™€ìˆ˜ì´ë©´ 10ì§„ìˆ˜ë¡œ ë³€ê²½
 			p_text[num++] = HtoI(temp);
 		}
 	}
 
-	printf("ºñ¹ĞÅ° ÀÔ·Â : ");
+	printf("ë¹„ë°€í‚¤ ì…ë ¥ : ");
 	gets(key_temp);
 	num = 0;
 	for (i = 0; i < (int)strlen((char*)key_temp); i++) {
@@ -159,27 +156,26 @@ void main() {
 		}
 	}
 	msg_len=(int)strlen((char*)p_temp)/2;
-	//2ÀÚ¸®¾¿ p_textÇÑÄ­¿¡ ³Ö¾î¼­ °á±¹ ¸Ş¼¼Áö ±æÀÌ´Â Àı¹İÀÌ µÊ
-	msg_len2 = msg_len; //Ãâ·ÂÀ» À§ÇØ Àü¿ªº¯¼ö¿¡ ±æÀÌ ÀÔ·Â
+	//2ìë¦¬ì”© p_textí•œì¹¸ì— ë„£ì–´ì„œ ê²°êµ­ ë©”ì„¸ì§€ ê¸¸ì´ëŠ” ì ˆë°˜ì´ ë¨
+	msg_len2 = msg_len; //ì¶œë ¥ì„ ìœ„í•´ ì „ì—­ë³€ìˆ˜ì— ê¸¸ì´ ì…ë ¥
 	block_count = (msg_len%BLOCK_SIZE) ? (msg_len / BLOCK_SIZE + 1) : (msg_len / BLOCK_SIZE);
 
 	for (i = 0; i < block_count; i++) {
 		DES_Encryption(&p_text[i*BLOCK_SIZE], &c_text[i*BLOCK_SIZE], key);
 	}
 
-	printf("\n¾ÏÈ£¹® : ");
+	printf("\nì•”í˜¸ë¬¸ : ");
 	for (i = 0; i < block_count*BLOCK_SIZE; i++) {
 		printf("%02X", c_text[i]);
 	}
-	//16Áø Á¤¼ö·Î Ãâ·ÂÇÏ±â À§ÇØ c->X·Î º¯°æ, µÎ ÀÚ¸´¼ö¸¦ À§ÇØ 02
+	//16ì§„ ì •ìˆ˜ë¡œ ì¶œë ¥í•˜ê¸° ìœ„í•´ c->Xë¡œ ë³€ê²½, ë‘ ìë¦¿ìˆ˜ë¥¼ ìœ„í•´ 02
 	printf("\n");
 
-//	printf("2018112071 Àü¹®¼ö\n\n");
 	for (i = 0; i < block_count; i++) {
 		DES_Decryption(&c_text[i*BLOCK_SIZE], &d_text[i*BLOCK_SIZE], key);
 	}
 	
-	printf("\nº¹È£¹® : ");
+	printf("\në³µí˜¸ë¬¸ : ");
 	for (i = 0; i < msg_len; i++) {
 		printf("%02X", d_text[i]);
 	}
@@ -194,15 +190,15 @@ void DES_Encryption(BYTE *p_text, BYTE *result, BYTE *key) {
 
 	key_expansion(key, round_key);
 	IP(p_text, data);
-/*	printf("ÃÊ±â pbox\n");
+/*	printf("ì´ˆê¸° pbox\n");
 	for (i = 0; i < msg_len2; i++) {
 		printf("%02X", data[i]);
 	}
 	printf("\n");
 */
 	BtoW(data, &L, &R);
-/*	//³ª´« ¹­À½ Ãâ·Â
-	printf(">feistel ±¸Á¶\n");
+/*	//ë‚˜ëˆˆ ë¬¶ìŒ ì¶œë ¥
+	printf(">feistel êµ¬ì¡°\n");
 	printf("L0 : %02X / ", L);
 	printf("R0 : %02X\n", R);
 */
@@ -216,14 +212,14 @@ void DES_Encryption(BYTE *p_text, BYTE *result, BYTE *key) {
 		if (i != DES_ROUND - 1)
 			swap(&L, &R);
 	}
-/*	//¸¶Áö¸· ¶ó¿îµå Ãâ·Â
+/*	//ë§ˆì§€ë§‰ ë¼ìš´ë“œ ì¶œë ¥
 	printf(">Round 16\n");
 	printf("L : %20X / ", L);
 	printf("R : %02X / ", R);
 	printf("key : %02X\n", round_key[DES_ROUND]);
 */
 	WtoB(L, R, data);
-/*	printf("ÇÕÄ¡±â\n");
+/*	printf("í•©ì¹˜ê¸°\n");
 	for (i = 0; i < msg_len2; i++) {
 		printf("%02X", data[i]);
 	}
@@ -240,15 +236,15 @@ void DES_Decryption(BYTE *c_text, BYTE *result, BYTE *key) {
 
 	key_expansion(key, round_key);
 	IP(c_text, data);
-/*	printf("ÃÊ±â pbox\n");
-	for (i = 0; i < msg_len2; i++) { //Ãâ·Â
+/*	printf("ì´ˆê¸° pbox\n");
+	for (i = 0; i < msg_len2; i++) { //ì¶œë ¥
 		printf("%02X", data[i]);
 	}
 	printf("\n");
 */
 	BtoW(data, &L, &R);
-	//³ª´« ¹­À½ Ãâ·Â
-/*	printf("feistel ±¸Á¶\n");
+	//ë‚˜ëˆˆ ë¬¶ìŒ ì¶œë ¥
+/*	printf("feistel êµ¬ì¡°\n");
 	printf("L0 : %02X / ", L);
 	printf("R0 : %02X\n", R);
 */
@@ -262,14 +258,14 @@ void DES_Decryption(BYTE *c_text, BYTE *result, BYTE *key) {
 		if (i != DES_ROUND - 1)
 			swap(&L, &R);
 	}
-/*	//¸¶Áö¸· ¶ó¿îµå Ãâ·Â
+/*	//ë§ˆì§€ë§‰ ë¼ìš´ë“œ ì¶œë ¥
 	printf("Round 16\n");
 	printf("L : %20X / ", L);
 	printf("R : %02X / ", R);
 	printf("key : %02X\n", round_key[DES_ROUND]);
 */
 	WtoB(L, R, data);
-/*	printf("ÇÕÄ¡±â\n");
+/*	printf("í•©ì¹˜ê¸°\n");
 	for (i = 0; i < msg_len2; i++) {
 		printf("%02X", data[i]);
 	}
@@ -308,7 +304,7 @@ void WtoB(UINT l, UINT r, BYTE *out) {
 	}
 }
 
-void IP(BYTE *in, BYTE *out) {//ÃÊ±â ¼ø¿­ ÇÁ·Î±×·¥
+void IP(BYTE *in, BYTE *out) {//ì´ˆê¸° ìˆœì—´ í”„ë¡œê·¸ë¨
 	int i;
 	BYTE index, bit, mask = 0x80;
 
@@ -321,7 +317,7 @@ void IP(BYTE *in, BYTE *out) {//ÃÊ±â ¼ø¿­ ÇÁ·Î±×·¥
 	}
 }
 
-void In_IP(BYTE *in, BYTE *out) {//¿ªÃÊ±â ¼ø¿­ ÇÁ·Î±×·¥
+void In_IP(BYTE *in, BYTE *out) {//ì—­ì´ˆê¸° ìˆœì—´ í”„ë¡œê·¸ë¨
 	int i;
 	BYTE index, bit, mask = 0x80;
 
@@ -334,7 +330,7 @@ void In_IP(BYTE *in, BYTE *out) {//¿ªÃÊ±â ¼ø¿­ ÇÁ·Î±×·¥
 	}
 }
 
-UINT f(UINT r, BYTE *rkey) { //ÇÔ¼ö ÇÁ·Î±×·¥
+UINT f(UINT r, BYTE *rkey) { //í•¨ìˆ˜ í”„ë¡œê·¸ë¨
 	int i;
 	BYTE data[6] = { 0, };
 	UINT out;
@@ -348,7 +344,7 @@ UINT f(UINT r, BYTE *rkey) { //ÇÔ¼ö ÇÁ·Î±×·¥
 	return out;
 }
 
-void EP(UINT r, BYTE *out) {//È®Àå ¼ø¿­ ÇÁ·Î±×·¥
+void EP(UINT r, BYTE *out) {//í™•ì¥ ìˆœì—´ í”„ë¡œê·¸ë¨
 	int i;
 	UINT mask = 0x80000000;
 	for (i = 0; i < 48; i++) {
@@ -358,7 +354,7 @@ void EP(UINT r, BYTE *out) {//È®Àå ¼ø¿­ ÇÁ·Î±×·¥
 	}
 }
 
-UINT S_box_Transfer(BYTE *in) {//s-box ÇÁ·Î±×·¥
+UINT S_box_Transfer(BYTE *in) {//s-box í”„ë¡œê·¸ë¨
 	int i, row, column, shift = 28;
 	UINT temp = 0, result = 0, mask = 0x00000080;
 
@@ -376,7 +372,7 @@ UINT S_box_Transfer(BYTE *in) {//s-box ÇÁ·Î±×·¥
 	return result;
 }
 
-UINT Permutation(UINT in) {//¼ø¿­ ÇÔ¼ö ÇÁ·Î±×·¥
+UINT Permutation(UINT in) {//ìˆœì—´ í•¨ìˆ˜ í”„ë¡œê·¸ë¨
 	int i;
 	UINT out = 0, mask = 0x80000000;
 
@@ -387,7 +383,7 @@ UINT Permutation(UINT in) {//¼ø¿­ ÇÔ¼ö ÇÁ·Î±×·¥
 	return out;
 }
 
-void key_expansion(BYTE *key, BYTE round_key[16][6]) {//Å° »ı¼º ÇÁ·Î±×·¥
+void key_expansion(BYTE *key, BYTE round_key[16][6]) {//í‚¤ ìƒì„± í”„ë¡œê·¸ë¨
 	int i;
 	BYTE pc1_result[7] = { 0, };
 	UINT c = 0, d = 0;
@@ -416,7 +412,7 @@ void makeBit28(UINT *c, UINT *d, BYTE *data) {
 	}
 }
 
-void PC1(BYTE *in, BYTE *out) {//¼ø¿­¼±ÅÃ-1 ÇÁ·Î±×·¥
+void PC1(BYTE *in, BYTE *out) {//ìˆœì—´ì„ íƒ-1 í”„ë¡œê·¸ë¨
 	int i, index, bit;
 	UINT mask = 0x00000080;
 
@@ -429,7 +425,7 @@ void PC1(BYTE *in, BYTE *out) {//¼ø¿­¼±ÅÃ-1 ÇÁ·Î±×·¥
 	}
 }
 
-UINT cir_shift(UINT n, int r) {//ÁÂÃø ¼øÈ¯ ÀÌµ¿ ÇÁ·Î±×·¥
+UINT cir_shift(UINT n, int r) {//ì¢Œì¸¡ ìˆœí™˜ ì´ë™ í”„ë¡œê·¸ë¨
 	int n_shift[16] = { 1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1 };
 	if (n_shift[r] == 1) {
 		n = (n << 1) + (n >> 27);
@@ -440,7 +436,7 @@ UINT cir_shift(UINT n, int r) {//ÁÂÃø ¼øÈ¯ ÀÌµ¿ ÇÁ·Î±×·¥
 	return n;
 }
 
-void PC2(UINT c, UINT d, BYTE *out) {//¼ø¿­¼±ÅÃ2 ÇÁ·Î±×·¥
+void PC2(UINT c, UINT d, BYTE *out) {//ìˆœì—´ì„ íƒ2 í”„ë¡œê·¸ë¨
 	int i;
 	UINT mask = 0x08000000;
 
@@ -461,9 +457,9 @@ int HtoI(BYTE *hex) {
 
 	result = 0;
 	temp0 = (int)hex[0];
-	temp1 = (int)hex[1];//char¸¦ int·Î º¯È¯, ASCIIÄÚµå »ç¿ë
+	temp1 = (int)hex[1];//charë¥¼ intë¡œ ë³€í™˜, ASCIIì½”ë“œ ì‚¬ìš©
 
-	//temp0, 16^1ÀÚ¸® °è»ê
+	//temp0, 16^1ìë¦¬ ê³„ì‚°
 	if (temp0 >= 48 && temp0 <= 57) {
 		result += (temp0 - 48) * 16;
 	}
@@ -474,7 +470,7 @@ int HtoI(BYTE *hex) {
 		result += (temp0 - (97 - 10)) * 16;
 	}
 
-	//temp1, 16^0ÀÚ¸® °è»ê
+	//temp1, 16^0ìë¦¬ ê³„ì‚°
 	if (temp1 >= 48 && temp1 <= 57) {
 		result += temp1 - 48;
 	}
